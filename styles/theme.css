@@ -132,7 +132,7 @@
     @apply text-[10px] font-normal leading-[13px];
   }
   .placeholder {
-    @apply placeholder:text-light-400 dark:placeholder:text-light-;
+    @apply placeholder:text-light-400 dark:placeholder:text-light-500;
   }
   .invert-colors {
     @apply invert dark:invert-0;
