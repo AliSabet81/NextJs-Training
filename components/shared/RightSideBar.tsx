@@ -5,33 +5,33 @@ import RenderTag from "./RenderTag";
 
 const hotQuestions = [
   {
-    _id: 1,
+    _id: '1',
     title: "How di I use express as a custom server in NextJs?",
   },
   {
-    _id: 2,
+    _id: '2',
     title: "Is it only me or the font is bolder than necessary?",
   },
   {
-    _id: 3,
+    _id: '3',
     title: "Can I get the course for free?",
   },
   {
-    _id: 4,
+    _id: '4',
     title: "Redux Toolkit Not Updating State as Expected",
   },
   {
-    _id: 5,
+    _id: '5',
     title: "Async/Await Function Not Handling Errors Properly",
   },
 ];
 
 const popularTags = [
-  { _id: 1, name: "javascript", totalQuestions: 5 },
-  { _id: 2, name: "react", totalQuestions: 5 },
-  { _id: 3, name: "next", totalQuestions: 5 },
-  { _id: 4, name: "vue", totalQuestions: 2 },
-  { _id: 5, name: "redux", totalQuestions: 10 },
+  { _id: '1', name: "javascript", totalQuestions: 5 },
+  { _id: '2', name: "react", totalQuestions: 5 },
+  { _id: '3', name: "next", totalQuestions: 5 },
+  { _id: '4', name: "vue", totalQuestions: 2 },
+  { _id: '5', name: "redux", totalQuestions: 10 },
 ];
 
 const RightSideBar = () => {
