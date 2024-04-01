@@ -23,13 +23,13 @@ export const getTimeStamp = (createdAt: Date): string => {
     const minutes = Math.floor(timeDifference / minute);
     return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
   } else if (timeDifference < day) {
-    const hours = Math.floor(timeDifference / minute);
+    const hours = Math.floor(timeDifference / hour);
     return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
   } else if (timeDifference < week) {
-    const days = Math.floor(timeDifference / minute);
+    const days = Math.floor(timeDifference / day);
     return `${days} ${days === 1 ? "day" : "days"} ago`;
   } else if (timeDifference < month) {
-    const weeks = Math.floor(timeDifference / minute);
+    const weeks = Math.floor(timeDifference / week);
     return `${weeks} ${weeks === 1 ? "week" : "weeks"} ago`;
   } else if (timeDifference < year) {
     const months = Math.floor(timeDifference / month);
@@ -37,5 +37,17 @@ export const getTimeStamp = (createdAt: Date): string => {
   } else {
     const years = Math.floor(timeDifference / year);
     return `${years} ${years === 1 ? "year" : "years"} ago`;
+  }
+};
+
+export const formatAndDivideNumber = (num: number): string => {
+  if (num >= 1000000) {
+    const formattedNum = (num / 1000000).toFixed(1);
+    return `${formattedNum}M`;
+  } else if (num >= 10000) {
+    const formattedNum = (num / 1000).toFixed(1);
+    return `${formattedNum}K`;
+  } else {
+    return num.toString();
   }
 };
