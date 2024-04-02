@@ -18,6 +18,7 @@ import { KeyboardEvent, useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
+import { createQuestion } from "@/lib/actions/question.action";
 
 const type: string = "create";
 
@@ -62,6 +63,7 @@ const Question = () => {
       }
     }
   };
+  
 
   const handleTagRemove = (tag: string, field: any) => {
     const newTags = field.value.filter((t: string) => t !== tag);
@@ -69,10 +71,11 @@ const Question = () => {
     form.setValue("tags", newTags);
   };
 
-  const onSubmit = (values: z.infer<typeof QuestionsSchema>) => {
+  const onSubmit = async (values: z.infer<typeof QuestionsSchema>) => {
     setIsSubmitting(true);
+    
     try {
-      // TODO:
+      await createQuestion({});
     } catch (error) {
     } finally {
       setIsSubmitting(false);
@@ -124,6 +127,8 @@ const Question = () => {
                     editorRef.current = editor;
                   }}
                   initialValue=""
+                  onBlur={field.onBlur}
+                  onEditorChange={(content)=> field.onChange(content)}
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
                   init={{
                     height: 350,

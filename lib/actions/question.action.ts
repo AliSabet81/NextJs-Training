@@ -1,7 +1,9 @@
 "use server";
 
+import { connectToDatabase } from "../mongoose";
+
 export const createQuestion = async (params) => {
   try {
-    // TODO:
+    connectToDatabase();
   } catch (error) {}
 };
