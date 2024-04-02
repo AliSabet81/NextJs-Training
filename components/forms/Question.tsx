@@ -63,7 +63,6 @@ const Question = () => {
       }
     }
   };
-  
 
   const handleTagRemove = (tag: string, field: any) => {
     const newTags = field.value.filter((t: string) => t !== tag);
@@ -73,9 +72,13 @@ const Question = () => {
 
   const onSubmit = async (values: z.infer<typeof QuestionsSchema>) => {
     setIsSubmitting(true);
-    
+
     try {
-      await createQuestion({});
+      await createQuestion({
+        title: values.title,
+        content: values.explanation,
+        tags: values.tags,
+      });
     } catch (error) {
     } finally {
       setIsSubmitting(false);
@@ -128,7 +131,7 @@ const Question = () => {
                   }}
                   initialValue=""
                   onBlur={field.onBlur}
-                  onEditorChange={(content)=> field.onChange(content)}
+                  onEditorChange={(content) => field.onChange(content)}
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
                   init={{
                     height: 350,
