@@ -14,12 +14,17 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { KeyboardEvent, useRef } from "react";
+import { KeyboardEvent, useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
+
+const type: string = "create";
+
 const Question = () => {
   const editorRef = useRef(null);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
@@ -64,7 +69,15 @@ const Question = () => {
     form.setValue("tags", newTags);
   };
 
-  const onSubmit = (values: z.infer<typeof QuestionsSchema>) => {};
+  const onSubmit = (values: z.infer<typeof QuestionsSchema>) => {
+    setIsSubmitting(true);
+    try {
+      // TODO:
+    } catch (error) {
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <Form {...form}>
@@ -193,8 +206,16 @@ const Question = () => {
             </FormItem>
           )}
         />
-        <Button className="" type="submit">
-          Submit
+        <Button
+          className="primary-gradient w-fit !text-light-900"
+          disabled={isSubmitting}
+          type="submit"
+        >
+          {isSubmitting ? (
+            <>{type === "edit" ? "Editing..." : "Posting..."}</>
+          ) : (
+            <>{type === "edit" ? "Edit Question" : "Ask a Question"}</>
+          )}
         </Button>
       </form>
     </Form>
