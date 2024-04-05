@@ -99,7 +99,7 @@ export interface CreateUserParams {
   email: string;
   picture: string;
 }
-export interface GetUserByIdParams {
+export interface getUserByIdParams {
   userId: string;
 }
 export interface GetAllUsersParams {
