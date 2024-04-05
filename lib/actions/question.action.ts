@@ -3,6 +3,11 @@
 import Question from "@/database/question.model";
 import { connectToDatabase } from "../mongoose";
 import Tag from "@/database/tag.model";
+import { GetQuestionParams } from "./shared.types";
+
+export const getQuestions = async (params:GetQuestionParams) => {
+  const { page } = params;
+}
 
 export const createQuestion = async (params: any) => {
   try {
