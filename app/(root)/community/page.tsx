@@ -1,8 +1,11 @@
 import Filter from "@/components/shared/Filter";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { UserFilters } from "@/constants/filters";
+import { getAllUsers } from "@/lib/actions/user.action";
 
-const page = () => {
+const Page = async () => {
+  const result = await getAllUsers({});
+
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">All Users</h1>
@@ -19,9 +22,11 @@ const page = () => {
           otherClasses="min-h-[56px] sm:min-w-[170px]"
         />
       </div>
-      <section className="mt-12 flex flex-wrap gap-4"></section>
+      <section className="mt-12 flex flex-wrap gap-4">
+        {result.users}
+      </section>
     </>
   );
 };
 
-export default page;
+export default Page;
