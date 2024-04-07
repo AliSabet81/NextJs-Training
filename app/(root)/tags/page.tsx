@@ -1,10 +1,7 @@
-import UserCard from "@/components/cards/UserCard";
 import Filter from "@/components/shared/Filter";
 import NoResult from "@/components/shared/NoResult";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
-import { TagFilters, UserFilters } from "@/constants/filters";
-import { getAllUsers } from "@/lib/actions/user.action";
-import Link from "next/link";
+import { TagFilters } from "@/constants/filters";
 import result from "postcss/lib/result";
 
 const Page = async () => {
@@ -27,7 +24,7 @@ const Page = async () => {
         />
       </div>
       <section className="mt-12 flex flex-wrap gap-4">
-        {result.tags.length > 0 ? (
+        {/* {result.tags.length > 0 ? (
           result.tags.map((tag) => <div></div>)
         ) : (
           <NoResult
@@ -36,7 +33,7 @@ const Page = async () => {
             link="/ask-question"
             linkTitle="Ask a question"
           />
-        )}
+        )} */}
       </section>
     </>
   );
