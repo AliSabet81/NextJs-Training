@@ -18,11 +18,13 @@ export const createAswer = async (params: CreateAnswerParams) => {
       question,
     });
 
+    await newAnswer.save();
+
     await Question.findByIdAndUpdate(question, {
       $push: { answers: newAnswer._id },
     });
 
-    revalidatePath(path)
+    revalidatePath(path);
   } catch (error) {
     console.log(error);
   }
