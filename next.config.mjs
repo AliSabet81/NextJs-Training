@@ -5,10 +5,13 @@ const nextConfig = {
 
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'assets1.ignimgs.com'
-      }
-    ]
+        protocol: "https",
+        hostname: "assets1.ignimgs.com",
+      },
+      { protocol: "https", hostname: "img.clerk.com" },
+      { protocol: "https", hostname: "*" },
+      { protocol: "http", hostname: "*" },
+    ],
   },
   experimental: {
     serverActions: true,

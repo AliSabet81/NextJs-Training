@@ -33,7 +33,7 @@ const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
           <SelectGroup>
             {filters.map((item) => (
               <SelectItem key={item.value} value={item.value}>
-                {item.value}
+                {item.name}
               </SelectItem>
             ))}
           </SelectGroup>
