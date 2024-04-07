@@ -16,7 +16,10 @@ export const getTopIntractedTags = async (
 
     if (!user) throw new Error("User not found");
 
-    return ["tag1", "tag2", "tag3"];
+    return [
+      { _id: "1", name: "tag1" },
+      { _id: "2", name: "tag2" },
+    ];
   } catch (error) {
     console.log(error);
     throw error;
