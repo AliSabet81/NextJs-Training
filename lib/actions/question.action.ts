@@ -7,6 +7,7 @@ import {
   CreateQuestionParams,
   GetQuestionByIdParams,
   GetQuestionsParams,
+  QuestionVoteParams,
 } from "./shared.types";
 import User from "@/database/user.mode";
 import { revalidatePath } from "next/cache";
@@ -87,6 +88,37 @@ export const getQuestionById = async (params: GetQuestionByIdParams) => {
       });
 
     return question;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const upVoteQuestion = async (params: QuestionVoteParams) => {
+  try {
+    connectToDatabase();
+
+    const { questionId, hasdownVoted, hasupVoted, userId, path } = params;
+
+    let updateQuery = {};
+    if (hasupVoted) {
+      updateQuery = { $pull: { upvotes: userId } };
+    } else if (hasdownVoted) {
+      updateQuery = {
+        $pull: { downvotes: userId },
+        $push: { upvotes: userId },
+      };
+    } else {
+      updateQuery = { $addToSet: { upvotes: userId } };
+    }
+    const question = await Question.findByIdAndUpdate(questionId, updateQuery, {
+      new: true,
+    });
+
+    if (!question) {
+      throw new Error("Question not found");
+    }
+    revalidatePath(path);
   } catch (error) {
     console.log(error);
     throw error;
