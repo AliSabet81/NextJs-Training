@@ -6,7 +6,6 @@ import {
   AnswerVoteParams,
   CreateAnswerParams,
   GetAnswersParams,
-  QuestionVoteParams,
 } from "./shared.types";
 import Question from "@/database/question.model";
 import { revalidatePath } from "next/cache";
@@ -69,6 +68,36 @@ export const upVoteAnswer = async (params: AnswerVoteParams) => {
       };
     } else {
       updateQuery = { $addToSet: { upvotes: userId } };
+    }
+    const answer = await Answer.findByIdAndUpdate(answerId, updateQuery, {
+      new: true,
+    });
+
+    if (!answer) {
+      throw new Error("Answer not found");
+    }
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+export const downVoteAnswer = async (params: AnswerVoteParams) => {
+  try {
+    connectToDatabase();
+
+    const { answerId, hasdownVoted, hasupVoted, userId, path } = params;
+
+    let updateQuery = {};
+    if (hasdownVoted) {
+      updateQuery = { $pull: { downvotes: userId } };
+    } else if (hasupVoted) {
+      updateQuery = {
+        $push: { downvotes: userId },
+        $pull: { upvotes: userId },
+      };
+    } else {
+      updateQuery = { $addToSet: { downvotes: userId } };
     }
     const answer = await Answer.findByIdAndUpdate(answerId, updateQuery, {
       new: true,
