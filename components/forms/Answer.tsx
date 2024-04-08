@@ -15,7 +15,7 @@ import { Editor } from "@tinymce/tinymce-react";
 import { useTheme } from "@/context";
 import { Button } from "../ui/button";
 import Image from "next/image";
-import { createAswer } from "@/lib/actions/answer.action";
+import { createAnswer } from "@/lib/actions/answer.action";
 import { usePathname } from "next/navigation";
 
 interface Props {
@@ -37,7 +37,7 @@ const Answer = ({ question, authorId, questionId }: Props) => {
   const handleCreateAnswer = async (values: z.infer<typeof AnswerSchema>) => {
     setIsSubmitting(true);
     try {
-      await createAswer({
+      await createAnswer({
         content: values.answer,
         author: JSON.parse(authorId),
         question: JSON.parse(questionId),
@@ -47,7 +47,7 @@ const Answer = ({ question, authorId, questionId }: Props) => {
       form.reset();
       if (editorRef.current) {
         const editor = editorRef.current as any;
-        editor.setContent("") ;
+        editor.setContent("");
       }
     } catch (error) {
       console.log(error);
