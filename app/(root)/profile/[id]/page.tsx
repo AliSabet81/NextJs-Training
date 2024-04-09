@@ -6,6 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getJoinedDate } from "@/lib/utils";
+import ProfileLink from "@/components/shared/ProfileLink";
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const { user, totalAnswers, totalQuestions } = await getUserInfo({
@@ -30,8 +32,16 @@ const Page = async ({ params, searchParams }: URLProps) => {
               @{user.username}
             </p>
             <div className="mt-5 flex flex-wrap items-center justify-start gap-5">
-              {user.location && <>location</>}
-              {user.joinedAt?.toString()}
+              {user.location && (
+                <ProfileLink
+                  imgUrl="/assets/icons/location.svg"
+                  title={user.location}
+                />
+              )}
+              <ProfileLink
+                imgUrl="/assets/icons/calendar.svg"
+                title={getJoinedDate(user?.joinedAt)}
+              />
             </div>
             {user.bio && <p>{user.bio}</p>}
           </div>
