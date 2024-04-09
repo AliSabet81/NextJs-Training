@@ -8,6 +8,7 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getJoinedDate } from "@/lib/utils";
 import ProfileLink from "@/components/shared/ProfileLink";
+import Stats from "@/components/shared/Stats";
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const { user, totalAnswers, totalQuestions } = await getUserInfo({
@@ -32,6 +33,13 @@ const Page = async ({ params, searchParams }: URLProps) => {
               @{user.username}
             </p>
             <div className="mt-5 flex flex-wrap items-center justify-start gap-5">
+              {user.portofolioWebsite && (
+                <ProfileLink
+                  imgUrl="/assets/icons/link.svg"
+                  href={user.portofolioWebsite}
+                  title="Portofolio"
+                />
+              )}
               {user.location && (
                 <ProfileLink
                   imgUrl="/assets/icons/location.svg"
@@ -43,7 +51,11 @@ const Page = async ({ params, searchParams }: URLProps) => {
                 title={getJoinedDate(user?.joinedAt)}
               />
             </div>
-            {user.bio && <p>{user.bio}</p>}
+            {user.bio && (
+              <p className="paragraph-regular text-dark400_light800 mt-8">
+                {user.bio}
+              </p>
+            )}
           </div>
         </div>
         <div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
@@ -58,7 +70,10 @@ const Page = async ({ params, searchParams }: URLProps) => {
           </SignedIn>
         </div>
       </div>
-      Stats
+      <Stats
+      totalQuestions={totalQuestions}
+      totalAnswers={totalAnswers}
+      />
       <div className="mt-10 flex gap-10">
         <Tabs defaultValue="top-posts" className="flex-1">
           <TabsList className="background-light800_dark400 min-h-[42px] p-1">
