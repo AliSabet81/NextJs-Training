@@ -10,6 +10,7 @@ import { getJoinedDate } from "@/lib/utils";
 import ProfileLink from "@/components/shared/ProfileLink";
 import Stats from "@/components/shared/Stats";
 import QuestionTab from "@/components/shared/QuestionTab";
+import AnswersTab from "@/components/shared/AnswersTab";
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const { user, totalAnswers, totalQuestions } = await getUserInfo({
@@ -89,7 +90,13 @@ const Page = async ({ params, searchParams }: URLProps) => {
               clerkId={clerkId}
             />
           </TabsContent>
-          <TabsContent value="answers">AnswersTab</TabsContent>
+          <TabsContent value="answers">
+            <AnswersTab
+              searchParams={searchParams}
+              userId={user._id}
+              clerkId={clerkId}
+            />
+          </TabsContent>
         </Tabs>
       </div>
     </>
