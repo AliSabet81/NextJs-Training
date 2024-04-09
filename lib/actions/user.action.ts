@@ -190,6 +190,8 @@ export const getUserQuestions = async (params: GetUserStatsParams) => {
     const { userId } = params;
 
     const totalQuestions = await Question.countDocuments({ author: userId });
+    console.log(totalQuestions);
+    
     const userQuestions = await Question.find({ author: userId })
       .sort({
         views: -1,
