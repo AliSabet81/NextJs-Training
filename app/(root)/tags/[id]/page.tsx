@@ -11,7 +11,6 @@ const Page = async ({ params, searchParams }: URLProps) => {
     page: 1,
     searchQuery: searchParams.q,
   });
-  console.log(result);
 
   return (
     <>
@@ -43,9 +42,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
         ) : (
           <NoResult
             title="There`s no tag question to show"
-            description="Be the first to break the silence! 🚀 Ask a Question and kickstart the
-      discussion. our query could be the next big thing learn from. Get
-      involved!"
+            description="Be the first to break the silence! 🚀 Ask a Question and kickstart the discussion. our query could be the next big thing learn from. Get involved!"
             link="/ask-question"
             linkTitle="Ask a Question"
           />
