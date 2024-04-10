@@ -15,6 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { useState } from "react";
+import { ProfileSchema } from "@/lib/validations";
+import { useRouter } from "next/navigation";
 
 interface Params {
   clerkId: string;
@@ -23,28 +25,36 @@ interface Params {
 
 const Profile = ({ clerkId, user }: Params) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const router = useRouter();
   const parsedUser = JSON.parse(user);
-  const formSchema = z.object({
-    username: z.string().min(2, {
-      message: "Username must be at least 2 characters.",
-    }),
-  });
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+
+  const form = useForm<z.infer<typeof ProfileSchema>>({
+    resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      username: "",
+      name: parsedUser.name || "",
+      username: parsedUser.username || "",
+      portofolioWebsite: parsedUser.portofolioWebsite || "",
+      location: parsedUser.location || "",
+      bio: parsedUser.bio || "",
     },
   });
 
-  // 2. Define a submit handler.
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  const onSubmit = (values: z.infer<typeof ProfileSchema>) => {
+    setIsSubmitting(true);
+    try {
+      router.back();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-9 flex w-full flex-col">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mt-9 flex w-full flex-col gap-9"
+      >
         <FormField
           control={form.control}
           name="name"
