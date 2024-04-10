@@ -16,18 +16,19 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { useState } from "react";
 import { ProfileSchema } from "@/lib/validations";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { updateUser } from "@/lib/actions/user.action";
 
-interface Params {
+interface Props {
   clerkId: string;
   user: string;
 }
 
-const Profile = ({ clerkId, user }: Params) => {
+const Profile = ({ clerkId, user }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const parsedUser = JSON.parse(user);
-
+  const pathname = usePathname();
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
@@ -39,9 +40,20 @@ const Profile = ({ clerkId, user }: Params) => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof ProfileSchema>) => {
+  const onSubmit = async (values: z.infer<typeof ProfileSchema>) => {
     setIsSubmitting(true);
     try {
+      await updateUser({
+        clerkId,
+        updateData: {
+          name: values.name,
+          username: values.username,
+          portofolioWebsite: values.portofolioWebsite,
+          location: values.location,
+          bio: values.bio,
+        },
+        path: pathname,
+      });
       router.back();
     } catch (error) {
       console.log(error);
