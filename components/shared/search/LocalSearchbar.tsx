@@ -1,5 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
+import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -35,8 +36,19 @@ const LocalSearchbar = ({
           key: "q",
           value: search,
         });
+
+        router.push(newUrl, { scroll: false });
+      } else {
+        if (pathname === route) {
+          const newUrl = removeKeysFromQuery({
+            params: searchParams.toString(),
+            keys: ["p"],
+          });
+          router.push(newUrl, { scroll: false });
+        }
       }
-    }, 500);
+    }, 300);
+    return () => clearTimeout(delayDebounceFn);
   }, [search, route, pathname, router, searchParams, query]);
 
   return (
