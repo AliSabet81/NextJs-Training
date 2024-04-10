@@ -36,17 +36,16 @@ const Question = ({ mongoUserId, questionDetails, type }: Props) => {
   const { mode } = useTheme();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const parsedQuestionDetails = questionDetails
-    ? JSON.parse(questionDetails || "")
-    : {};
+  const parsedQuestionDetails =
+    questionDetails && JSON.parse(questionDetails || "");
   const groupedTags = parsedQuestionDetails?.tags?.map(
     (tag: { name: string }) => tag.name
   );
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
     defaultValues: {
-      title: parsedQuestionDetails.title || "",
-      explanation: parsedQuestionDetails.content || "",
+      title: parsedQuestionDetails?.title || "",
+      explanation: parsedQuestionDetails?.content || "",
       tags: groupedTags || [],
     },
   });
@@ -151,13 +150,12 @@ const Question = ({ mongoUserId, questionDetails, type }: Props) => {
                 <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
-                {/* TODO: */}
                 <Editor
                   onInit={(evt, editor) => {
                     // @ts-ignore
                     editorRef.current = editor;
                   }}
-                  initialValue={parsedQuestionDetails.content || ""}
+                  initialValue={parsedQuestionDetails?.content || ""}
                   onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
