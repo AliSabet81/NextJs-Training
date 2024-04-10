@@ -7,13 +7,14 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "../ui/textarea";
+import { useState } from "react";
 
 interface Params {
   clerkId: string;
@@ -21,6 +22,8 @@ interface Params {
 }
 
 const Profile = ({ clerkId, user }: Params) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const parsedUser = JSON.parse(user);
   const formSchema = z.object({
     username: z.string().min(2, {
@@ -41,7 +44,7 @@ const Profile = ({ clerkId, user }: Params) => {
   };
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-9 flex w-full">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-9 flex w-full flex-col">
         <FormField
           control={form.control}
           name="name"
@@ -115,7 +118,7 @@ const Profile = ({ clerkId, user }: Params) => {
             </FormItem>
           )}
         />
-         <FormField
+        <FormField
           control={form.control}
           name="bio"
           render={({ field }) => (
@@ -132,7 +135,15 @@ const Profile = ({ clerkId, user }: Params) => {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <div className="mt-7 flex justify-end">
+          <Button
+            disabled={isSubmitting}
+            type="submit"
+            className="primary-gradient w-fit"
+          >
+            {isSubmitting ? "Saving..." : "Save"}
+          </Button>
+        </div>
       </form>
     </Form>
   );
