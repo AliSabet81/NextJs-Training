@@ -61,13 +61,19 @@ export const getQuestionByTagId = async (params: GetQuestionsByTagIdParams) => {
     connectToDatabase();
 
     const { tagId, searchQuery } = params;
+
+    const query: FilterQuery<typeof Tag> = {};
+
+    if (searchQuery) {
+      query.$or = [
+        { title: { $regex: new RegExp(searchQuery, "i") } },
+      ];
+    }
     const tagFilter: FilterQuery<ITag> = { _id: tagId };
     const tag = await Tag.findOne(tagFilter).populate({
       path: "questions",
       model: Question,
-      match: searchQuery
-        ? { title: { $regex: searchQuery, options: "i" } }
-        : {},
+      match: query,
       options: {
         sort: { createdAt: -1 },
       },
