@@ -15,6 +15,7 @@ import User from "@/database/user.mode";
 import { revalidatePath } from "next/cache";
 import Answer from "@/database/answer.mode";
 import Interaction from "@/database/interaction.model";
+import path from "path";
 
 export const getQuestions = async (params: GetQuestionsParams) => {
   try {
@@ -192,10 +193,26 @@ export const editQuestion = async (params: EditQuestionParams) => {
 
     question.title = title;
     question.content = content;
-    
+
     await question.save();
 
     revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+export const getHotQuestion = async () => {
+  try {
+    connectToDatabase();
+
+    const hotQuestion = await Question.find({})
+      .sort({
+        views: -1,
+        upvotes: -1,
+      })
+      .limit(5);
+      return hotQuestion
   } catch (error) {
     console.log(error);
     throw error;
