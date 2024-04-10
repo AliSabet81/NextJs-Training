@@ -15,7 +15,6 @@ import User from "@/database/user.mode";
 import { revalidatePath } from "next/cache";
 import Answer from "@/database/answer.mode";
 import Interaction from "@/database/interaction.model";
-import path from "path";
 
 export const getQuestions = async (params: GetQuestionsParams) => {
   try {

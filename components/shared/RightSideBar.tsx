@@ -2,29 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import RenderTag from "./RenderTag";
+import { getHotQuestion } from "@/lib/actions/question.action";
 
-const hotQuestions = [
-  {
-    _id: '1',
-    title: "How di I use express as a custom server in NextJs?",
-  },
-  {
-    _id: '2',
-    title: "Is it only me or the font is bolder than necessary?",
-  },
-  {
-    _id: '3',
-    title: "Can I get the course for free?",
-  },
-  {
-    _id: '4',
-    title: "Redux Toolkit Not Updating State as Expected",
-  },
-  {
-    _id: '5',
-    title: "Async/Await Function Not Handling Errors Properly",
-  },
-];
 
 const popularTags = [
   { _id: '1', name: "javascript", totalQuestions: 5 },
@@ -36,7 +15,7 @@ const popularTags = [
 
 const RightSideBar = async() => {
 
-  // const hotQuestion = await getHotQuestion()
+  const hotQuestions = await getHotQuestion()
   return (
     <section className="background-light900_dark200 light-border custom-scrollbar sticky right-0 top-0 flex h-screen w-[350px] flex-col overflow-y-auto border-l p-6 pt-36 shadow-light-300 dark:shadow-none max-xl:hidden">
       <div className="">
@@ -45,7 +24,7 @@ const RightSideBar = async() => {
           {hotQuestions.map((question) => (
             <Link
               key={question._id}
-              href={`/questions/${question._id}`}
+              href={`/question/${question._id}`}
               className="flex cursor-pointer items-center justify-between gap-7"
             >
               <p className="body-medium text-dark500_light700">
