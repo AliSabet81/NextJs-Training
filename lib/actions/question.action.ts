@@ -192,10 +192,26 @@ export const editQuestion = async (params: EditQuestionParams) => {
 
     question.title = title;
     question.content = content;
-    
+
     await question.save();
 
     revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+export const getHotQuestion = async () => {
+  try {
+    connectToDatabase();
+
+    const hotQuestion = await Question.find({})
+      .sort({
+        views: -1,
+        upvotes: -1,
+      })
+      .limit(5);
+      return hotQuestion
   } catch (error) {
     console.log(error);
     throw error;
