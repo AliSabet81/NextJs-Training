@@ -15,12 +15,22 @@ import User from "@/database/user.mode";
 import { revalidatePath } from "next/cache";
 import Answer from "@/database/answer.mode";
 import Interaction from "@/database/interaction.model";
+import { FilterQuery } from "mongoose";
 
 export const getQuestions = async (params: GetQuestionsParams) => {
   try {
     connectToDatabase();
+    const { searchQuery } = params;
 
-    const questions = await Question.find({})
+    const query: FilterQuery<typeof Question> = {};
+
+    if (searchQuery) {
+      query.$or = [
+        { title: { $regex: new RegExp(searchQuery, "i") } },
+        { content: { $regex: new RegExp(searchQuery, "i") } },
+      ];
+    }
+    const questions = await Question.find(query)
       .populate({
         path: "tags",
         model: Tag,
@@ -211,7 +221,7 @@ export const getHotQuestion = async () => {
         upvotes: -1,
       })
       .limit(5);
-      return hotQuestion
+    return hotQuestion;
   } catch (error) {
     console.log(error);
     throw error;

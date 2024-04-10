@@ -81,10 +81,18 @@ export const deleteUser = async (userData: DeleteUserParams) => {
 export const getAllUsers = async (params: GetAllUsersParams) => {
   try {
     connectToDatabase();
+    const { searchQuery } = params;
 
-    // const { page = 1, pageSize = 20, searchQuery, filter } = params;
+    const query: FilterQuery<typeof User> = {};
 
-    const users = await User.find({}).sort({ createdAt: -1 });
+    if (searchQuery) {
+      query.$or = [
+        { name: { $regex: new RegExp(searchQuery, "i") } },
+        { username: { $regex: new RegExp(searchQuery, "i") } },
+      ];
+    }
+
+    const users = await User.find(query).sort({ createdAt: -1 });
 
     return { users };
   } catch (error) {
@@ -191,7 +199,7 @@ export const getUserQuestions = async (params: GetUserStatsParams) => {
 
     const totalQuestions = await Question.countDocuments({ author: userId });
     console.log(totalQuestions);
-    
+
     const userQuestions = await Question.find({ author: userId })
       .sort({
         views: -1,
