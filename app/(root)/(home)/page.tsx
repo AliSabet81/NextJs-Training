@@ -69,7 +69,10 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
         )}
       </div>
       <div className="mt-10">
-        <Pagination />
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={result.isNext}
+        />
       </div>
     </>
   );
