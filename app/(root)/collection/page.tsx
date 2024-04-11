@@ -11,9 +11,11 @@ import React from "react";
 const Page = async ({ searchParams }: SearchParamsProps) => {
   const { userId } = auth();
   if (!userId) return null;
-  
+
   const result = await getSavedQuestion({
-    clerkId: userId,searchQuery: searchParams.q
+    clerkId: userId,
+    searchQuery: searchParams.q,
+    filter: searchParams.filter,
   });
 
   return (
@@ -34,7 +36,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
       </div>
       <div className="mt-10 flex w-full flex-col gap-6">
         {result?.questions.length > 0 ? (
-          result?.questions.map((question:any) => (
+          result?.questions.map((question: any) => (
             <QuestionCard
               key={question._id}
               _id={question._id}
