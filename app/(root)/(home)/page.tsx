@@ -11,7 +11,10 @@ import Link from "next/link";
 import React from "react";
 
 const Home = async ({ searchParams }: SearchParamsProps) => {
-  const result = await getQuestions({ searchQuery: searchParams.q });
+  const result = await getQuestions({
+    searchQuery: searchParams.q,
+    filter: searchParams.filter,
+  });
 
   return (
     <>
