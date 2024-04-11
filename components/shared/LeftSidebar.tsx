@@ -22,7 +22,6 @@ const LeftSidebar = () => {
           if (item.route === "/profile") {
             if (userId) {
               item.route = `${item.route}/${userId}`;
-              console.log(item.route);
             } else {
               return null;
             }
