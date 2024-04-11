@@ -20,7 +20,7 @@ import { FilterQuery } from "mongoose";
 export const getQuestions = async (params: GetQuestionsParams) => {
   try {
     connectToDatabase();
-    const { searchQuery, filter, page = 1, pageSize = 2 } = params;
+    const { searchQuery, filter, page = 1, pageSize = 20 } = params;
 
     const skipAmount = (page - 1) * pageSize;
 
