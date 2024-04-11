@@ -161,7 +161,9 @@ export const getSavedQuestion = async (params: GetSavedQuestionsParams) => {
   try {
     connectToDatabase();
 
-    const { clerkId, searchQuery, filter } = params;
+    const { clerkId, searchQuery, filter, page = 1, pageSize = 20 } = params;
+    const skipAmount = (page - 1) * pageSize;
+
     const query: FilterQuery<typeof Question> = searchQuery
       ? { title: { $regex: new RegExp(searchQuery, "i") } }
       : {};
@@ -191,6 +193,8 @@ export const getSavedQuestion = async (params: GetSavedQuestionsParams) => {
       match: query,
       options: {
         sort: sortOption,
+        skip: skipAmount,
+        limit: pageSize + 1,
       },
       populate: [
         { path: "tags", model: "Tag", select: "_id name" },
@@ -202,9 +206,11 @@ export const getSavedQuestion = async (params: GetSavedQuestionsParams) => {
       throw new Error("User not found");
     }
 
+    const isNext = user.saved.length > pageSize;
+
     const savedQuestion = user.saved;
 
-    return { questions: savedQuestion };
+    return { questions: savedQuestion, isNext };
   } catch (error) {
     console.log(error);
     throw error;
