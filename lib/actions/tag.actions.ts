@@ -37,17 +37,34 @@ export const getAllTags = async (params: GetAllTagsParams) => {
   try {
     connectToDatabase();
 
-    const { searchQuery } = params;
+    const { searchQuery, filter } = params;
 
     const query: FilterQuery<typeof Tag> = {};
 
     if (searchQuery) {
-      query.$or = [
-        { name: { $regex: new RegExp(searchQuery, "i") } },
-      ];
+      query.$or = [{ name: { $regex: new RegExp(searchQuery, "i") } }];
+    }
+  
+    let sortOption = {};
+
+    switch (filter) {
+      case "popular":
+        sortOption = { questions: -1 };
+        break;
+      case "recent":
+        sortOption = { createdOn: -1 };
+        break;
+      case "name":
+        sortOption = { name: 1 };
+        break;
+      case "old":
+        sortOption = { createdOn: 1 };
+        break;
+      default:
+        break;
     }
 
-    const tags = await Tag.find(query);
+    const tags = await Tag.find(query).sort(sortOption);
 
     return { tags };
   } catch (error) {
@@ -65,9 +82,7 @@ export const getQuestionByTagId = async (params: GetQuestionsByTagIdParams) => {
     const query: FilterQuery<typeof Tag> = {};
 
     if (searchQuery) {
-      query.$or = [
-        { title: { $regex: new RegExp(searchQuery, "i") } },
-      ];
+      query.$or = [{ title: { $regex: new RegExp(searchQuery, "i") } }];
     }
     const tagFilter: FilterQuery<ITag> = { _id: tagId };
     const tag = await Tag.findOne(tagFilter).populate({
