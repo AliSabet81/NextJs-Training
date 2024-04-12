@@ -34,7 +34,7 @@ const GlobalSearch = () => {
     return () => {
       document.removeEventListener("click", handleOutSideClick);
     };
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
