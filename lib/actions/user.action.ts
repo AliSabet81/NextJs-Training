@@ -246,7 +246,6 @@ export const getUserInfo = async (params: getUserByIdParams) => {
     ]);
     const [questionViews] = await Question.aggregate([
       { $match: { author: user._id } },
-      { $project: { _id: 0, upvotes: { $size: "$upvotes" } } },
       { $group: { _id: null, totalViews: { $sum: "$views" } } },
     ]);
 
@@ -266,10 +265,17 @@ export const getUserInfo = async (params: getUserByIdParams) => {
         count: questionViews?.totalViews || 0,
       },
     ];
+    
 
     const badgeCounts = assignBadges({ criteria });
 
-    return { user, totalQuestions, totalAnswers, badgeCounts };
+    return {
+      user,
+      totalQuestions,
+      totalAnswers,
+      badgeCounts,
+      reputation: user.reputation,
+    };
   } catch (error) {
     console.log(error);
     throw error;
