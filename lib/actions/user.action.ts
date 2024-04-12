@@ -17,6 +17,7 @@ import { revalidatePath } from "next/cache";
 import Question from "@/database/question.model";
 import Answer from "@/database/answer.mode";
 import { BadgeCriteriaType } from "@/types";
+import { assignBadges } from "../utils";
 
 export const getUserById = async (params: getUserByIdParams) => {
   try {
@@ -256,13 +257,19 @@ export const getUserInfo = async (params: getUserByIdParams) => {
         type: "QUESTION_UPVOTES" as BadgeCriteriaType,
         count: questionUpvotes?.totalUpvotes || 0,
       },
-      { type: "ANSWER_UPVOTES" as BadgeCriteriaType, count: answerUpvotes?.totalUpvotes || 0 },
-      { type: "TOTAL_VIEWS" as BadgeCriteriaType, count: questionViews?.totalViews || 0, },
+      {
+        type: "ANSWER_UPVOTES" as BadgeCriteriaType,
+        count: answerUpvotes?.totalUpvotes || 0,
+      },
+      {
+        type: "TOTAL_VIEWS" as BadgeCriteriaType,
+        count: questionViews?.totalViews || 0,
+      },
     ];
 
-    // const badgeCount = 
+    const badgeCounts = assignBadges({ criteria });
 
-    return { user, totalQuestions, totalAnswers };
+    return { user, totalQuestions, totalAnswers, badgeCounts };
   } catch (error) {
     console.log(error);
     throw error;
