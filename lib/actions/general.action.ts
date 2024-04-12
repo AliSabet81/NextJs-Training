@@ -13,7 +13,7 @@ export const globalSearch = async (params: SearchParams) => {
     connectToDatabase();
 
     const { query, type } = params;
-    const regexQuery = { $regext: query, $options: "i" };
+    const regexQuery = { $regex: query, $options: "i" };
 
     let results = [];
 
@@ -34,7 +34,7 @@ export const globalSearch = async (params: SearchParams) => {
             title:
               type === "answer"
                 ? `Answers contaning ${query}`
-                : item[item.searchField],
+                : item[searchField],
             type,
             id:
               type === "user"
