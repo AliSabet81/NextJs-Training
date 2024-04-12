@@ -37,7 +37,7 @@ export const createAnswer = async (params: CreateAnswerParams) => {
       answer: newAnswer._id,
       tags: questionObject.tags,
     });
-    
+
     await User.findByIdAndUpdate(author, {
       $inc: { reputation: 10 },
     });
@@ -113,6 +113,14 @@ export const upVoteAnswer = async (params: AnswerVoteParams) => {
     if (!answer) {
       throw new Error("Answer not found");
     }
+
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasupVoted ? -2 : 2 },
+    });
+    await User.findByIdAndUpdate(answer.author, {
+      $inc: { reputation: hasupVoted ? -10 : 10 },
+    });
+
     revalidatePath(path);
   } catch (error) {
     console.log(error);
