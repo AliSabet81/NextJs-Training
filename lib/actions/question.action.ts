@@ -203,6 +203,12 @@ export const downVoteQuestion = async (params: QuestionVoteParams) => {
     const question = await Question.findByIdAndUpdate(questionId, updateQuery, {
       new: true,
     });
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasdownVoted ? -2 : 2 },
+    });
+    await User.findByIdAndUpdate(question.author, {
+      $inc: { reputation: hasdownVoted ? -10 : 10 },
+    });
 
     if (!question) {
       throw new Error("Question not found");
