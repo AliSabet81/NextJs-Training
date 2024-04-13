@@ -18,7 +18,6 @@ const Page = async ({ params, searchParams }: URLProps) => {
       userId: params.id,
     });
   const { userId: clerkId } = auth();
-  console.log(badgeCounts);
 
   return (
     <>
