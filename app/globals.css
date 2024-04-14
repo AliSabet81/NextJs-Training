@@ -28,7 +28,7 @@ body {
     @apply bg-light-700 dark:bg-dark-300 !important;
   }
   .markdown {
-    @apply max-w-full prose dark:prose-p:text-light-700 dark:pros;
+    @apply max-w-full prose dark:prose-p:text-light-700 dark:prose-ol:text-light-700 dark:prose-ul:text-light-500 dark:prose-strong:text-white dark:prose-headings:text-white prose-headings:text-dark-400 prose-h1:text-dark-300 prose-h2:text-dark-300 prose-p:text-dark-500 prose-ul:text-dark-500 prose-ol:text-dark-500;
   }
   .primary-gradient {
     background: linear-gradient(129deg, #ff7000 0%, #e2995f 100%);

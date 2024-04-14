@@ -9,6 +9,7 @@ import {
 } from "./shared.types";
 import User from "@/database/user.mode";
 import Question from "@/database/question.model";
+// @ts-ignore
 import { FilterQuery } from "mongoose";
 
 export const getTopIntractedTags = async (
