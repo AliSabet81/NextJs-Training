@@ -1,5 +1,5 @@
 "use server";
-
+// @ts-ignore
 import { FilterQuery } from "mongoose";
 import User from "@/database/user.mode";
 import { connectToDatabase } from "../mongoose";
