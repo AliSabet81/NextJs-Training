@@ -8,8 +8,13 @@ import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import { getQuestions } from "@/lib/actions/question.action";
 import { SearchParamsProps } from "@/types";
+import { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "Home | JSM Dev Flow",
+};
 
 const Home = async ({ searchParams }: SearchParamsProps) => {
   const result = await getQuestions({
