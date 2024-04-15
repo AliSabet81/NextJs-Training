@@ -11,6 +11,7 @@ import User from "@/database/user.mode";
 import Question from "@/database/question.model";
 // @ts-ignore
 import { FilterQuery } from "mongoose";
+import Interaction from "@/database/interaction.model";
 
 export const getTopIntractedTags = async (
   params: GetTopInteractedTagsParams
@@ -22,12 +23,40 @@ export const getTopIntractedTags = async (
 
     const user = await User.findById(userId);
 
-    if (!user) throw new Error("User not found");
+    if (!user) {
+      throw new Error("user not found");
+    }
 
-    return [
-      { _id: "1", name: "tag1" },
-      { _id: "2", name: "tag2" },
-    ];
+    // Find user's intractions
+    const userIntractions = await Interaction.find({ user: user._id })
+      .populate("tags")
+      .exec();
+
+    // group array of intraction tas by name id and count
+    const groupedByTag = userIntractions.reduce((acc, item) => {
+      item.tags.forEach((tag: ITag) => {
+        const _id = tag._id;
+        const name = tag.name;
+        const key = `${_id}_${name}`;
+        if (!acc[key]) {
+          acc[key] = { _id, name, count: 0 };
+        }
+        acc[key].count++;
+      });
+      return acc;
+    }, {});
+    const groupedArray = Object.values(groupedByTag);
+
+    // sort grouped tag by its count
+    const sortedTags = groupedArray.sort(
+      (
+        a: { _id: string; name: string; count: number },
+        b: { _id: string; name: string; count: number }
+      ) => b.count - a.count
+    );
+    const topTwoTags = sortedTags.slice(0, 2);
+    
+    return topTwoTags;
   } catch (error) {
     console.log(error);
     throw error;
