@@ -34,7 +34,7 @@ const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
   };
 
   return (
-    <div className={`relative ${containerClasses}`}>
+    <div className={`relative ${containerClasses} z-50`}>
       <Select
         onValueChange={handleUpdateParams}
         defaultValue={paramFilter || undefined}
@@ -46,11 +46,11 @@ const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
             <SelectValue placeholder="Select a Filter" />
           </div>
         </SelectTrigger>
-        <SelectContent className="text-dark500_light700 small-regular border-none bg-light-900 dark:bg-dark-300">
-          <SelectGroup>
+        <SelectContent className="text-dark500_light700 small-regular z-50 border-none bg-light-900 dark:bg-dark-300">
+          <SelectGroup className="z-50">
             {filters.map((item) => (
               <SelectItem
-                className="cursor-pointer focus:bg-light-800 dark:focus:bg-dark-400"
+                className="z-50 cursor-pointer focus:bg-light-800 dark:focus:bg-dark-400"
                 key={item.value}
                 value={item.value}
               >
