@@ -30,7 +30,7 @@ export const globalSearch = async (params: SearchParams) => {
           .find({ [searchField]: regexQuery })
           .limit(2);
         results.push(
-          ...quesryResult.map((item) => ({
+          ...quesryResult.map((item: any) => ({
             title:
               type === "answer"
                 ? `Answers contaning ${query}`
@@ -54,7 +54,7 @@ export const globalSearch = async (params: SearchParams) => {
         .find({ [modelInfo.searchField]: regexQuery })
         .limit(8);
 
-      results = queryResult.map((item) => ({
+      results = queryResult.map((item: any) => ({
         title:
           type === "answer"
             ? `Answers contaning ${query}`
