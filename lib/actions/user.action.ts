@@ -1,5 +1,5 @@
 "use server";
-
+// @ts-ignore
 import { FilterQuery } from "mongoose";
 import User from "@/database/user.mode";
 import { connectToDatabase } from "../mongoose";
@@ -8,12 +8,16 @@ import {
   DeleteUserParams,
   GetAllUsersParams,
   GetSavedQuestionsParams,
+  GetUserStatsParams,
   ToggleSaveQuestionParams,
   UpdateUserParams,
   getUserByIdParams,
 } from "./shared.types";
 import { revalidatePath } from "next/cache";
 import Question from "@/database/question.model";
+import Answer from "@/database/answer.mode";
+import { BadgeCriteriaType } from "@/types";
+import { assignBadges } from "../utils";
 
 export const getUserById = async (params: getUserByIdParams) => {
   try {
@@ -79,12 +83,41 @@ export const deleteUser = async (userData: DeleteUserParams) => {
 export const getAllUsers = async (params: GetAllUsersParams) => {
   try {
     connectToDatabase();
+    const { searchQuery, filter, page = 1, pageSize = 10 } = params;
+    const skipAmount = (page - 1) * pageSize;
 
-    // const { page = 1, pageSize = 20, searchQuery, filter } = params;
+    const query: FilterQuery<typeof User> = {};
 
-    const users = await User.find({}).sort({ createdAt: -1 });
+    if (searchQuery) {
+      query.$or = [
+        { name: { $regex: new RegExp(searchQuery, "i") } },
+        { username: { $regex: new RegExp(searchQuery, "i") } },
+      ];
+    }
+    let sortOption = {};
 
-    return { users };
+    switch (filter) {
+      case "new_users":
+        sortOption = { joinedAt: -1 };
+        break;
+      case "old_users":
+        sortOption = { joinedAt: 1 };
+        break;
+      case "top_contributors":
+        sortOption = { reputation: -1 };
+        break;
+      default:
+        break;
+    }
+
+    const users = await User.find(query)
+      .sort(sortOption)
+      .skip(skipAmount)
+      .limit(pageSize);
+    const totalUsers = await User.countDocuments(query);
+    const isNext = totalUsers > skipAmount + users.length;
+
+    return { users, isNext };
   } catch (error) {
     console.log(error);
     throw error;
@@ -130,15 +163,40 @@ export const getSavedQuestion = async (params: GetSavedQuestionsParams) => {
   try {
     connectToDatabase();
 
-    const { clerkId, searchQuery } = params;
+    const { clerkId, searchQuery, filter, page = 1, pageSize = 10 } = params;
+    const skipAmount = (page - 1) * pageSize;
+
     const query: FilterQuery<typeof Question> = searchQuery
       ? { title: { $regex: new RegExp(searchQuery, "i") } }
       : {};
+    let sortOption = {};
+
+    switch (filter) {
+      case "most_recent":
+        sortOption = { createdAt: -1 };
+        break;
+      case "oldest":
+        sortOption = { createdAt: 1 };
+        break;
+      case "most_voted":
+        sortOption = { upvotes: -1 };
+        break;
+      case "most_viewed":
+        sortOption = { views: -1 };
+        break;
+      case "most_answered":
+        sortOption = { answers: -1 };
+        break;
+      default:
+        break;
+    }
     const user = await User.findOne({ clerkId }).populate({
       path: "saved",
       match: query,
       options: {
-        sort: { createdAt: -1 },
+        sort: sortOption,
+        skip: skipAmount,
+        limit: pageSize + 1,
       },
       populate: [
         { path: "tags", model: "Tag", select: "_id name" },
@@ -150,9 +208,122 @@ export const getSavedQuestion = async (params: GetSavedQuestionsParams) => {
       throw new Error("User not found");
     }
 
+    const isNext = user.saved.length > pageSize;
+
     const savedQuestion = user.saved;
 
-    return { questions: savedQuestion };
+    return { questions: savedQuestion, isNext };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getUserInfo = async (params: getUserByIdParams) => {
+  try {
+    connectToDatabase();
+
+    const { userId } = params;
+
+    const user = await User.findOne({ clerkId: userId });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const totalQuestions = await Question.countDocuments({ author: user._id });
+    const totalAnswers = await Answer.countDocuments({ author: user._id });
+
+    const [questionUpvotes] = await Question.aggregate([
+      { $match: { author: user._id } },
+      { $project: { _id: 0, upvotes: { $size: "$upvotes" } } },
+      { $group: { _id: null, totalUpvotes: { $sum: "$upvotes" } } },
+    ]);
+    const [answerUpvotes] = await Answer.aggregate([
+      { $match: { author: user._id } },
+      { $project: { _id: 0, upvotes: { $size: "$upvotes" } } },
+      { $group: { _id: null, totalUpvotes: { $sum: "$upvotes" } } },
+    ]);
+    const [questionViews] = await Question.aggregate([
+      { $match: { author: user._id } },
+      { $group: { _id: null, totalViews: { $sum: "$views" } } },
+    ]);
+
+    const criteria = [
+      { type: "QUESTION_COUNT" as BadgeCriteriaType, count: totalQuestions },
+      { type: "ANSWER_COUNT" as BadgeCriteriaType, count: totalAnswers },
+      {
+        type: "QUESTION_UPVOTES" as BadgeCriteriaType,
+        count: questionUpvotes?.totalUpvotes || 0,
+      },
+      {
+        type: "ANSWER_UPVOTES" as BadgeCriteriaType,
+        count: answerUpvotes?.totalUpvotes || 0,
+      },
+      {
+        type: "TOTAL_VIEWS" as BadgeCriteriaType,
+        count: questionViews?.totalViews || 0,
+      },
+    ];
+    
+
+    const badgeCounts = assignBadges({ criteria });
+
+    return {
+      user,
+      totalQuestions,
+      totalAnswers,
+      badgeCounts,
+      reputation: user.reputation,
+    };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getUserQuestions = async (params: GetUserStatsParams) => {
+  try {
+    connectToDatabase();
+
+    const { userId, page = 1, pageSize = 10 } = params;
+    const skipAmount = (page - 1) * pageSize;
+
+    const totalQuestions = await Question.countDocuments({ author: userId });
+
+    const userQuestions = await Question.find({ author: userId })
+      .sort({ createdAt: -1, views: -1, upvotes: -1 })
+      .skip(skipAmount)
+      .limit(pageSize)
+      .populate("tags", "_id name")
+      .populate("author", "_id clerkId name picture");
+
+    const isNext = totalQuestions > skipAmount + userQuestions.length;
+    return { questions: userQuestions, totalQuestions, isNext };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+export const getUserAnswers = async (params: GetUserStatsParams) => {
+  try {
+    connectToDatabase();
+
+    const { userId, page = 1, pageSize = 10 } = params;
+    const skipAmount = (page - 1) * pageSize;
+
+    const totalAnswers = await Answer.countDocuments({ author: userId });
+    const userAnswers = await Answer.find({ author: userId })
+      .sort({
+        upvotes: -1,
+      })
+      .skip(skipAmount)
+      .limit(pageSize)
+      .populate("question", "_id title")
+      .populate("author", "_id clerkId name picture");
+    const isNext = totalAnswers > skipAmount + userAnswers.length;
+
+    return { answers: userAnswers, totalAnswers, isNext };
   } catch (error) {
     console.log(error);
     throw error;

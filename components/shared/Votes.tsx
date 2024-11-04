@@ -1,5 +1,6 @@
 "use client";
 import { downVoteAnswer, upVoteAnswer } from "@/lib/actions/answer.action";
+import { viewQuestion } from "@/lib/actions/interaction.action";
 import {
   downVoteQuestion,
   upVoteQuestion,
@@ -7,8 +8,9 @@ import {
 import { toggleSaveQuestion } from "@/lib/actions/user.action";
 import { formatAndDivideNumber } from "@/lib/utils";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import React from "react";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useEffect } from "react";
+import { toast } from "../ui/use-toast";
 
 interface Props {
   type: string;
@@ -32,6 +34,7 @@ const Votes = ({
   hasSaved,
 }: Props) => {
   const pathname = usePathname();
+  const router = useRouter();
 
   const handleSave = async () => {
     await toggleSaveQuestion({
@@ -39,10 +42,17 @@ const Votes = ({
       userId: JSON.parse(userId),
       questionId: JSON.parse(itemId),
     });
+    toast({
+      title: `Question ${hasSaved ? "Removed from your collection" : "Saved in"}`,
+      variant: hasSaved ? "destructive" : "default",
+    });
   };
   const handleVote = async (action: string) => {
     if (!userId) {
-      return;
+      return toast({
+        title: "Please log in",
+        description: "Tou must be logged in to perform this action",
+      });
     }
     if (action === "upvote") {
       if (type === "Question") {
@@ -62,6 +72,11 @@ const Votes = ({
           path: pathname,
         });
       }
+
+      toast({
+        title: `Upvote ${hasupVoted ? "Removed" : "Seccessful"}`,
+        variant: hasupVoted ? "destructive" : "default",
+      });
       return;
     }
 
@@ -83,8 +98,19 @@ const Votes = ({
           path: pathname,
         });
       }
+      toast({
+        title: `Downvote ${hasdownVoted ? "Removed" : "Seccessful"}`,
+        variant: hasdownVoted ? "destructive" : "default",
+      });
     }
   };
+
+  useEffect(() => {
+    viewQuestion({
+      questionId: JSON.parse(itemId),
+      userId: userId ? JSON.parse(userId) : undefined,
+    });
+  }, [itemId, userId, pathname, router]);
 
   return (
     <div className="flex gap-5">
